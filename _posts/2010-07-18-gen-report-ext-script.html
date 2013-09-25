@@ -1,0 +1,77 @@
+---
+layout: post
+title: Orgmode Generate custom report using external python script.
+---
+
+<p>
+I use <a href="http://orgmode.org">orgmode</a> in emacs as a to-do list manager. End of every week I
+send my status report to the team. Earlier I used to do this manually
+by going through the agenda for the week and collecting relevant
+information. I thought of automating it since this is repeated every
+week.
+</p>
+
+<p>
+It was super easy for me because, I strictly associate each task with
+a corresponding tag to uniquely identify it. These tags are related to
+my office project and the script is a custom one which suits my
+requirement.
+</p>
+
+<p>
+Here is the emacs part.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp">(<span style="color: #859900;">defun</span> <span style="color: #268bd2;">noorul/gen_weekly_report</span> (startPos endPos)
+  <span style="color: #586e75; font-style: italic;">"Generate weekly report using external pythong script"</span>
+(interactive <span style="color: #2aa198;">"r"</span>)
+  (<span style="color: #859900;">let</span> (scriptName)
+    (setq scriptName <span style="color: #2aa198;">"~/work/python/gen_weekly_report.py"</span>)
+    (shell-command-on-region startPos endPos scriptName <span style="color: #2aa198;">"*Weekly Report*"</span> 
+                             nil nil t)
+    ))
+
+(global-set-key (kbd <span style="color: #2aa198;">"&lt;f6&gt; r"</span>) 'noorul/gen_weekly_report)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #586e75; font-style: italic;">#</span><span style="color: #586e75; font-style: italic;">!/usr/bin/env python</span>
+<span style="color: #859900;">import</span> sys
+<span style="color: #859900;">import</span> re
+
+<span style="color: #268bd2;">report_dict</span> = {}
+<span style="color: #268bd2;">cubit_issue_id_regex</span> = re.<span style="color: #859900;">compile</span>(<span style="color: #2aa198;">'.*(cubit\d+):.*$'</span>)
+<span style="color: #268bd2;">artf_issue_id_regex</span> = re.<span style="color: #859900;">compile</span>(<span style="color: #2aa198;">'.*(artf\d+):.*$'</span>)
+<span style="color: #268bd2;">issue_desc_regex</span> = re.<span style="color: #859900;">compile</span>(<span style="color: #2aa198;">'.*(WAITING|DONE|NEXT) (.*) :.*$'</span>)
+<span style="color: #859900;">for</span> line <span style="color: #859900;">in</span> sys.stdin.readlines():
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">id_match</span> = re.match(cubit_issue_id_regex, line)
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #859900;">if</span> <span style="color: #859900;">not</span> id_match:
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">id_match</span> = re.match(artf_issue_id_regex, line)
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #859900;">if</span> id_match:
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">issue</span> = id_match.groups()[0]
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">issue_desc</span> = <span style="color: #2aa198;">''</span>
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">desc_match</span> = re.match(issue_desc_regex, line)
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #859900;">if</span> desc_match:
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">issue_desc</span> = desc_match.groups()[1]
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #859900;">if</span> issue <span style="color: #859900;">not</span> <span style="color: #859900;">in</span> report_dict.keys():
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #268bd2;">report_dict</span>[issue] = issue_desc
+
+<span style="color: #859900;">print</span> <span style="color: #2aa198;">'This Week:\n'</span>
+<span style="color: #859900;">for</span> issue <span style="color: #859900;">in</span> <span style="color: #859900;">sorted</span>(report_dict.keys()):
+<span style="color: #586e75; background-color: #073642;"> </span>   <span style="color: #859900;">print</span> <span style="color: #2aa198;">'* %-10s: %s'</span> % (issue,  report_dict[issue])
+</pre>
+</div>
+
+<p>
+Now to collect my report, all what I have to do is, go to the agenda
+buffer switch to log mode and mark the week area and press 'F6 r'.
+</p>
+
+<p>
+I think I can avoid the region marking step. That will be an
+enhancement.
+</p>

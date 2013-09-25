@@ -1,0 +1,36 @@
+---
+layout: post
+title: Using google web font for my site.
+---
+<p>
+I was looking for a better font for my blog. My search ended with
+<a href="http://code.google.com/webfonts/specimen/Droid+Sans">Droid Sans</a>. This particular font is one among the many fonts that are
+available as part of <a href="http://www.google.com/webfonts">Google Web Fonts</a> project. How do I use this
+inside HTML? Just add the following line under the &lt;head&gt; tag.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-html">&lt;<span style="color: #268bd2;">link</span> <span style="color: #268bd2;">type</span>=<span style="color: #2aa198;">"text/css"</span> <span style="color: #268bd2;">rel</span>=<span style="color: #2aa198;">"stylesheet"</span>
+      <span style="color: #268bd2;">href</span>=<span style="color: #2aa198;">"http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans:bold|Droid+Sans+Mono"</span> /&gt;
+</pre>
+</div>
+
+<p>
+Then in your CSS definition use Droid Sans and Droid Sans Mono as
+required. For example I have something like this.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-css"><span style="color: #268bd2;">body, input, textarea </span>{
+    <span style="color: #268bd2;">color</span>: #444;
+    <span style="color: #268bd2;">font</span>: 14px <span style="color: #2aa198;">"Droid Sans"</span>, arial, helvetica, sans-serif;
+    <span style="color: #268bd2;">line-height</span>: 1.5em;
+}
+</pre>
+</div>
+
+<p>
+This font looks really great. I like it.
+</p>

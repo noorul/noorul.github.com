@@ -1,0 +1,50 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: Debian Squeeze (aka 6.0) on IBM ThinkPad R52.
+---
+#+END_HTML
+Installing the latest version of Debian ThinkPad R52 was not as
+straight forward as I thought. I had only one issue and this blog post
+talks about that. Since I manually solved this problem, I hope a blog
+post might be useful for others.
+
+The problem occurs while detecting "Network devices". The installer is
+unable to proceed because the process (ethdetect) which detects all
+network devices never returns control to the installer. Since IBM
+ThinkPad R52 comes with Intel wireless chip, the driver needs firmware
+which are not part of Debian official release.
+
+#+begin_example
+noorul@laptop:~$ lspci | grep Wireless
+04:02.0 Network controller: Intel Corporation PRO/Wireless 2200BG [Calexico2] Network Connection (rev 05)
+#+end_example
+
+The installer keeps on looking for this firmware in /dev/fd0 (i.e
+floppy disk) which my machine don't have and it loops. See below.
+
+#+begin_example
+Feb  6 11:18:09 kernel: [  210.472933] FAT: utf8 is not a recommended IO charset for FAT filesystems, filesystem will be case sensitive!
+Feb  6 11:18:13 kernel: [  214.710322] end_request: I/O error, dev fd0, sector 0
+Feb  6 11:18:26 kernel: [  227.758197] end_request: I/O error, dev fd0, sector 0
+Feb  6 11:18:26 kernel: [  227.758207] FAT: utf8 is not a recommended IO charset for FAT filesystems, filesystem will be case sensitive!
+Feb  6 11:18:30 kernel: [  231.454131] kjournald starting.  Commit interval 5 seconds
+Feb  6 11:18:30 kernel: [  231.454335] EXT3 FS on sda9, internal journal
+Feb  6 11:18:30 kernel: [  231.454338] EXT3-fs: mounted filesystem with ordered data mode.
+Feb  6 11:18:39 kernel: [  240.810198] end_request: I/O error, dev fd0, sector 0
+Feb  6 11:18:39 kernel: [  240.810207] FAT: unable to read boot sector
+Feb  6 11:18:52 kernel: [  253.874008] end_request: I/O error, dev fd0, sector 0
+Feb  6 11:19:05 kernel: [  266.933613] end_request: I/O error, dev fd0, sector 0
+Feb  6 11:19:05 kernel: [  266.933630] attempt to access beyond end of device
+Feb  6 11:19:05 kernel: [  266.933633] fd0: rw=0, want=66, limit=8
+Feb  6 11:19:05 kernel: [  266.933636] isofs_fill_super: bread failed, dev=fd0, iso_blknum=16, block=32
+#+end_example
+
+As a solution, I choose "expert mode" installation and before setting
+Network devices, I switched over to another virtual terminal (Alt-F2)
+and got a shell. I ran "ethdetect" command there so that this runs as
+a separate process independent of the installer. This step will not
+block the installer and you can continue with setting up network from
+the menu skipping detecting network devices.

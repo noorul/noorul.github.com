@@ -1,0 +1,30 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: Using google web font for my site.
+---
+#+END_HTML
+I was looking for a better font for my blog. My search ended with
+[[http://code.google.com/webfonts/specimen/Droid+Sans][Droid Sans]]. This particular font is one among the many fonts that are
+available as part of [[http://www.google.com/webfonts][Google Web Fonts]] project. How do I use this
+inside HTML? Just add the following line under the <head> tag.
+
+#+begin_src html
+<link type="text/css" rel="stylesheet"
+      href="http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans:bold|Droid+Sans+Mono" />
+#+end_src
+
+Then in your CSS definition use Droid Sans and Droid Sans Mono as
+required. For example I have something like this.
+
+#+begin_src css
+body, input, textarea {
+    color: #444;
+    font: 14px "Droid Sans", arial, helvetica, sans-serif;
+    line-height: 1.5em;
+}
+#+end_src
+
+This font looks really great. I like it.

@@ -1,0 +1,39 @@
+---
+layout: post
+title: Setup org2blog for blogging from emacs.
+---
+<p>
+<a href="http://github.com/punchagan/org2blog">org2blog</a> is written by <a href="http://github.com/punchagan">Puneeth Chaganti</a>. It is an emacs extension to
+post org mode sub trees as wordpress blog entries. In order to set
+this up clone the repository from github.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #586e75; font-style: italic;"># </span><span style="color: #586e75; font-style: italic;">clone org2blog git repository</span>
+git clone http://github.com/punchagan/org2blog.git
+</pre>
+</div>
+
+<p>
+Add the following snippet to ~/.emacs
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp">(add-to-list 'load-path <span style="color: #2aa198;">"~/site-lisp/org2blog"</span>)
+(<span style="color: #859900;">require</span> '<span style="color: #2aa198;">org2blog-autoloads</span>)
+
+(setq org2blog/wp-blog-alist
+       '((<span style="color: #2aa198;">"noorul.com"</span>
+          <span style="color: #859900;">:url</span> <span style="color: #2aa198;">"http://noorul.com/blog/xmlrpc.php"</span>
+          <span style="color: #859900;">:username</span> <span style="color: #2aa198;">"admin"</span>
+          <span style="color: #859900;">:tags-as-categories</span> t)))
+(org2blog/wp-login)
+</pre>
+</div>
+
+<p>
+Then I can go to the entry and call M-x org2blog/wp-post-subtree to
+post a draft or C-u M-x org2blog/wp-post-subtree to publish it.
+</p>

@@ -1,0 +1,33 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: Setup org2blog for blogging from emacs.
+---
+#+END_HTML
+[[http://github.com/punchagan/org2blog][org2blog]] is written by [[http://github.com/punchagan][Puneeth Chaganti]]. It is an emacs extension to
+post org mode sub trees as wordpress blog entries. In order to set
+this up clone the repository from github.
+
+#+begin_src sh
+# clone org2blog git repository
+git clone http://github.com/punchagan/org2blog.git
+#+end_src
+
+Add the following snippet to ~/.emacs
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/site-lisp/org2blog")
+(require 'org2blog-autoloads)
+
+(setq org2blog/wp-blog-alist
+       '(("noorul.com"
+          :url "http://noorul.com/blog/xmlrpc.php"
+          :username "admin"
+          :tags-as-categories t)))
+(org2blog/wp-login)
+#+end_src
+
+Then I can go to the entry and call M-x org2blog/wp-post-subtree to
+post a draft or C-u M-x org2blog/wp-post-subtree to publish it.

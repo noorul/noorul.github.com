@@ -1,0 +1,25 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: Write consistently!
+---
+#+END_HTML
+I started this blog to learn writing and communicate with outside
+world. Also to make my presence on the web felt. But I am not updating
+this blog regularly which is very bad.
+
+I am a person who admires [[http://sachachua.com][Sacha Chua]] in this particular skill. I have
+been following her blog ever since she started blogging using
+emacs-muse and planner (both of them are major modes of Emacs). Over
+the time I could see a change in her style of writing and look and
+feel of her blog. She has evolved and I like this evolution. I could
+learn one thing from this, start small and things will fall in place.
+
+Recently I contacted her to become my mentor. She agreed to do the
+same. I hope with lots of tips and guidance from her, I can make this
+blog active. The very first thing she told me is that I should write
+first and forget about style, English and look and feel which will
+become better as time progress. So this is my first post towards new
+beginning. Thank you Sacha!

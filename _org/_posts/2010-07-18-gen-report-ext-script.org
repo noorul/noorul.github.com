@@ -1,0 +1,67 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: Orgmode Generate custom report using external python script.
+---
+#+END_HTML
+
+I use [[http://orgmode.org][orgmode]] in emacs as a to-do list manager. End of every week I
+send my status report to the team. Earlier I used to do this manually
+by going through the agenda for the week and collecting relevant
+information. I thought of automating it since this is repeated every
+week.
+
+It was super easy for me because, I strictly associate each task with
+a corresponding tag to uniquely identify it. These tags are related to
+my office project and the script is a custom one which suits my
+requirement.
+
+Here is the emacs part.
+
+#+begin_src emacs-lisp
+(defun noorul/gen_weekly_report (startPos endPos)
+  "Generate weekly report using external pythong script"
+(interactive "r")
+  (let (scriptName)
+    (setq scriptName "~/work/python/gen_weekly_report.py")
+    (shell-command-on-region startPos endPos scriptName "*Weekly Report*" 
+			     nil nil t)
+    ))
+
+(global-set-key (kbd "<f6> r") 'noorul/gen_weekly_report)
+#+end_src
+
+#+begin_src python
+#!/usr/bin/env python
+import sys
+import re
+
+report_dict = {}
+cubit_issue_id_regex = re.compile('.*(cubit\d+):.*$')
+artf_issue_id_regex = re.compile('.*(artf\d+):.*$')
+issue_desc_regex = re.compile('.*(WAITING|DONE|NEXT) (.*) :.*$')
+for line in sys.stdin.readlines():
+    id_match = re.match(cubit_issue_id_regex, line)
+    if not id_match:
+        id_match = re.match(artf_issue_id_regex, line)
+    if id_match:
+        issue = id_match.groups()[0]
+        issue_desc = ''
+        desc_match = re.match(issue_desc_regex, line)
+        if desc_match:
+            issue_desc = desc_match.groups()[1]
+            if issue not in report_dict.keys():
+                report_dict[issue] = issue_desc
+
+print 'This Week:\n'
+for issue in sorted(report_dict.keys()):
+    print '* %-10s: %s' % (issue,  report_dict[issue])
+#+end_src
+
+Now to collect my report, all what I have to do is, go to the agenda
+buffer switch to log mode and mark the week area and press 'F6 r'.
+
+I think I can avoid the region marking step. That will be an
+enhancement.

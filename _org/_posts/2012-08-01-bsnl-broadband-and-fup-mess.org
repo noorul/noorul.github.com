@@ -1,0 +1,14 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: BSNL broadband and FUP mess
+---
+#+END_HTML
+I have been using BSNL broadband connection for around 4 years.
+Recently they introduced FUP (Fair Usage Policy). As per this policy
+every month, I get to use 6 GB of data at 1 Mbps speed and after that,
+the speed drops to 512 kps. Today, being 1st of the month, I supposed
+to get 1 Mbps, but I was only getting 512 Kbps. This is because I
+rarely switch off my modem/router. I had to reboot it to fix it.
