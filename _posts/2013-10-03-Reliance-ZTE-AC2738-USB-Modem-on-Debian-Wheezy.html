@@ -1,0 +1,63 @@
+---
+layout: post
+title: Reliance ZTE AC2738 USB modem on Debian Wheezy
+---
+<p>
+Recently my old Reliance NetConnect+ USB modem stopped working because of
+hardware issue. The old one is made by HUAWEI and worked out of the box on
+Debian Wheezy. The new one that I bought as a replacement is ZTE model AC2738
+and refused to work out of the box. I did the following to make it work.
+</p>
+
+<p>
+Created new file /etc/udev/rules.d/90-zte.rules and added the following.
+</p>
+
+<pre class="example">
+SUBSYSTEM=="block", SUBSYSTEMS=="scsi", ATTRS{model}=="USB Storage FFE9", ACTION=="add", RUN+="/sbin/modprobe usbserial vendor=0x19d2 product=0xffe9"
+</pre>
+
+<p>
+How did I arrive at that solution?
+</p>
+
+<p>
+There is no readily available driver for this modem in linux. So, when this
+device is plugged in, usb-storage module is loaded by default. Since usbserial
+kernel module is compatible with most of the USB modems, I tried loading this
+manually using following command.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">/sbin/modprobe usbserial <span style="color: #268bd2;">vendor</span>=0x19d2 <span style="color: #268bd2;">product</span>=0xffe9
+</pre>
+</div>
+
+<p>
+Vendor and Product id can be obtained using the <code>lsmod</code> command. The above
+command successfully recognized the modem and I was able to use <code>wvdialconf</code> to
+detect the modem.
+</p>
+
+<p>
+The next step is to automate this so that this is loaded every time machine
+boots. For this I added a <a href="http://reactivated.net/writing_udev_rules.html">udev rule</a> that I mentioned above. In order to figure
+out which unique match keys is to be used, the following command helped.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">udevadm info --name=/dev/sdb --attribute-walk
+</pre>
+</div>
+
+<p>
+The device name may change with respect to your system. I used <code>dmesg</code> command
+to figure that out.
+</p>
+
+<p>
+The fun part is that, the effort that I put up for figuring this out was useful
+for another member of <a href="http://ilugc.in">ILUGC</a>. The entire discussion thread is <a href="http://comments.gmane.org/gmane.org.user-groups.linux.ilugc/82199">here</a>.
+</p>

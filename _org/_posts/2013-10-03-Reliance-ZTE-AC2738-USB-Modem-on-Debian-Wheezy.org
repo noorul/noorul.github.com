@@ -1,0 +1,47 @@
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: post
+title: Reliance ZTE AC2738 USB modem on Debian Wheezy
+---
+#+END_HTML
+Recently my old Reliance NetConnect+ USB modem stopped working because of
+hardware issue. The old one is made by HUAWEI and worked out of the box on
+Debian Wheezy. The new one that I bought as a replacement is ZTE model AC2738
+and refused to work out of the box. I did the following to make it work.
+
+Created new file /etc/udev/rules.d/90-zte.rules and added the following.
+
+#+begin_example
+SUBSYSTEM=="block", SUBSYSTEMS=="scsi", ATTRS{model}=="USB Storage FFE9", ACTION=="add", RUN+="/sbin/modprobe usbserial vendor=0x19d2 product=0xffe9"
+#+end_example
+
+How did I arrive at that solution?
+
+There is no readily available driver for this modem in linux. So, when this
+device is plugged in, usb-storage module is loaded by default. Since usbserial
+kernel module is compatible with most of the USB modems, I tried loading this
+manually using following command.
+
+#+begin_src sh
+/sbin/modprobe usbserial vendor=0x19d2 product=0xffe9
+#+end_src
+
+Vendor and Product id can be obtained using the =lsmod= command. The above
+command successfully recognized the modem and I was able to use =wvdialconf= to
+detect the modem.
+
+The next step is to automate this so that this is loaded every time machine
+boots. For this I added a [[http://reactivated.net/writing_udev_rules.html][udev rule]] that I mentioned above. In order to figure
+out which unique match keys is to be used, the following command helped.
+
+#+begin_src sh
+udevadm info --name=/dev/sdb --attribute-walk
+#+end_src
+
+The device name may change with respect to your system. I used =dmesg= command
+to figure that out.
+
+The fun part is that, the effort that I put up for figuring this out was useful
+for another member of [[http://ilugc.in][ILUGC]]. The entire discussion thread is [[http://comments.gmane.org/gmane.org.user-groups.linux.ilugc/82199][here]].
